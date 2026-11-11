@@ -86,6 +86,13 @@ bash wps.sh find 192.168.1             # 不知道 IP 时扫网段（DHCP/校园
 bash wps.sh show                     # 看当前配置
 ```
 
+## 配套 Skill（可选）
+
+仓库里带了一份给 agent 用的技能：`skills/wps-doc-ops/SKILL.md`。装了它，agent 就知道这 48 个 action 怎么用、哪些坑会让数据静默坏掉、写表前要先备份。
+
+- 本地装：拷到 `~/.dsh/skills/wps-doc-ops/SKILL.md`（或 `.dsh/skills/` 对应目录）
+- 市场装：https://deepseek.stream/skills/wps-doc-ops
+
 ## 接口
 
 ```
