@@ -1,2 +1,5 @@
-# dsh-wps-bridge 不是 node 插件，不需要 cordis patch。
-# 它是一对脚本：Windows 上跑 wps-exec.ps1，Linux 侧用 wps.sh 调用。
+# dsh-wps-bridge bundle patch
+# 纯 insert(id/name)。name 必须是实际包名，cordis 按 name import。
+- insert:
+    - id: dsh-wps-bridge
+      name: dsh-wps-bridge

@@ -87,6 +87,45 @@ powershell -ExecutionPolicy Bypass -File wps-exec.ps1 -Token <随机串> -AllowS
 - **COM 类未注册**：在 `wps.sh script` 里 `New-Object -ComObject ket.Application` 会报 `0x80040154`。COM 对象只存在于 worker 进程里，不要另起实例。
 - **编辑长文档后必须先 `save` 再读回**，否则读到的是内存里未提交的版本。
 
+## 作为一个 DSH 插件装
+
+仓库根目录就是一个 DSH 插件（`index.js` + `cordis.patch.yml`），脚本作为附带文件一起发。
+
+```bash
+# ① 挂载（四步一起做，幂等）
+node <你的插件工作区>/link.mjs dsh-wps-bridge
+# ② 重启 dsh
+```
+
+或者手改 `$DSH_HOME/profiles/web/package.json`：
+
+```json
+"dependencies": { "dsh-wps-bridge": "link:<插件目录绝对路径>" },
+"dsh": { "profile": { "bundles": ["dsh-wps-bridge"] } }
+```
+
+挂上之后多一个工具 `wps`：
+
+| action | 干什么 |
+|---|---|
+| `ping` | 探活，看那台 Windows 的桥在不在 |
+| `call` | 原样转发一个动作：`op` + `params`（`open` / `getRange` / `setRange` / `appInfo` / `exportPdf` …） |
+| `read` | `getRange` 简写，给 `range` |
+| `write` | `setRange` 简写，给 `range` + `rows` 二维数组 |
+| `save` | 保存当前文档 |
+| `script` | 跑一段 PowerShell（要 Windows 侧开 `-AllowScript`） |
+
+地址两种给法，环境变量优先：
+
+```bash
+export WPS_BRIDGE_URL=http://192.168.1.50:8765
+export WPS_BRIDGE_TOKEN=...        # 与 Windows 侧 -Token 一致，没开就留空
+```
+
+或插件配置 `{ "url": "...", "token": "..." }`。
+
+> 插件不启动任何服务、不监听端口 —— 它只是客户端。真正干活的是 Windows 那台。
+
 ## 灵感来源
 
 这个桥的形态不是原创的。
