@@ -40,9 +40,9 @@ WPS 的 COM 接口只在 Windows 上存在，而 DSH 常跑在手机 proot 里�
 **Linux / DSH 侧**
 
 ```bash
-bash wps.sh set 172.16.1.85:8765     # 记下地址
+bash wps.sh set 192.168.1.50:8765      # 记下地址（换成你那台的 IP:端口）
 bash wps.sh ping                     # 探活
-bash wps.sh find 172.16.1            # 不知道 IP 时扫网段
+bash wps.sh find 192.168.1             # 不知道 IP 时扫网段
 bash wps.sh show                     # 看当前配置
 ```
 
