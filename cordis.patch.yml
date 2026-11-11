@@ -1,0 +1,2 @@
+# dsh-wps-bridge 不是 node 插件，不需要 cordis patch。
+# 它是一对脚本：Windows 上跑 wps-exec.ps1，Linux 侧用 wps.sh 调用。

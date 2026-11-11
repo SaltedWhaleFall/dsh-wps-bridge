@@ -1,0 +1,11 @@
+{
+  "name": "dsh-wps-bridge",
+  "version": "0.9.0",
+  "description": "把 Windows 上的 WPS/Excel 通过本地 HTTP 桥接给 Agent 用：服务端常驻 worker + COM 直连，Linux 侧一行命令行读写单元格、跑 PowerShell。",
+  "keywords": ["dsh-plugin", "dsh", "deepseek-harness", "wps", "excel", "powershell", "bridge"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/SaltedWhaleFall/dsh-wps-bridge.git" },
+  "os": ["win32"],
+  "files": ["wps-exec.ps1", "wps-com.ps1", "wps-worker.ps1", "wps.sh", "启动WPS桥.bat", "README.md", "README-original.txt", "LICENSE"],
+  "engines": { "node": ">=18" }
+}
