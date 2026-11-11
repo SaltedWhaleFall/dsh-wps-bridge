@@ -89,18 +89,20 @@ powershell -ExecutionPolicy Bypass -File wps-exec.ps1 -Token <随机串> -AllowS
 
 ## 灵感来源
 
-这个桥不是原创的形态。**「用本地 HTTP 端口把『模型能发什么』和『Office 能做什么』解耦，两侧各写薄薄一层」这个思路，来自社区里已有人写过的 WPS 桥接插件**——本仓库是在那套思路上的重写与整理，不是从零发明。
+这个桥的形态不是原创的。
 
-具体差别在实现层：
+**「把 WPS 包成一个本地桥，让模型用一句话读写表格」这件事，`lc2panda/wps-skills` 已经做过** —— 那套仓库里是一个 TypeScript 写的 MCP server（`wps-office-mcp`）加一组 Skills，走「把 WPS 暴露成 MCP 工具」的路子。本项目借用的是这个**形态判断**，不是它的代码：它是 Node/TypeScript 的 MCP server，这里是 Windows 侧常驻 worker 直连 COM 的另一条实现，两边没有共享源码。
 
-- 服务端换成了常驻 worker（`wps-worker.ps1`），请求排队串行执行，避免 COM 重入
-- `wps-com.ps1` 的 COM 封装按 WPS 官方 COM 接口重新整理，动作表与参数命名重写
-- 加了 `-Token` 与 `-AllowScript` 两道开关（默认关闭任意脚本执行）
-- Linux 侧客户端 `wps.sh` 带 `find` 自动发现与 `~/.wps-exec.conf` 持久化
+差别在实现层：
 
-原作者的仓库/昵称我这边没有准确记录，所以不在这里编一个。若你认出这套形态的出处，欢迎提 issue 补上署名。
+- 服务端是常驻 PowerShell worker（`wps-worker.ps1`），请求排队串行执行，避免 COM 重入
+- 不走 MCP 协议，直接 HTTP JSON：`POST /wps {"action":..,"params":{}}`，Linux 侧 `curl` 一行就能调
+- 加了 `-Token` 与 `-AllowScript` 两道开关（后者默认关闭任意脚本执行）
+- `wps.sh` 带 `find` 自动发现与 `~/.wps-exec.conf` 持久化
 
-`wps-com.ps1` 的 COM 封装基于 WPS 官方 COM 接口整理。
+致谢：[lc2panda/wps-skills](https://github.com/lc2panda/wps-skills)（MIT）。
+
+`wps-com.ps1` 的 COM 封装按 WPS 官方 COM 接口整理，动作命名尽量贴近常见叫法。
 
 ## License
 
