@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui" onLoad="OnAddinLoad">
+  <ribbon startFromScratch="false">
+    <tabs>
+      <tab id="dshBridgeTab" label="DSH 桥">
+        <group id="dshCfgGroup" label="连接">
+          <button id="dshBtnConfig" label="端口 / 路径" size="large" onAction="OnConfig"/>
+          <button id="dshBtnShow" label="手机命令" size="large" onAction="OnShowCommand"/>
+          <button id="dshBtnPing" label="探活" onAction="OnPing"/>
+        </group>
+        <group id="dshHelpGroup" label="说明">
+          <button id="dshBtnHelp" label="怎么用" onAction="OnHelp"/>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>

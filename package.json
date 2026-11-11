@@ -3,7 +3,15 @@
   "version": "0.9.0",
   "type": "module",
   "description": "把 Windows 上的 WPS/Excel 通过本地 HTTP 桥接给 agent：Windows 侧常驻 worker + COM 直连，插件侧一个 wps 工具读写单元格、保存、跑 PowerShell。",
-  "keywords": ["dsh-plugin", "dsh", "deepseek-harness", "wps", "excel", "powershell", "bridge"],
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "deepseek-harness",
+    "wps",
+    "excel",
+    "powershell",
+    "bridge"
+  ],
   "license": "MIT",
   "author": "SaltedWhaleFall",
   "main": "./index.js",
@@ -22,12 +30,20 @@
     "启动WPS桥.bat",
     "README.md",
     "README-original.txt",
-    "LICENSE"
+    "LICENSE",
+    "addon/"
   ],
   "dsh": {
     "manifestVersion": 1,
-    "bundle": { "patch": "./cordis.patch.yml" }
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   },
-  "repository": { "type": "git", "url": "https://github.com/SaltedWhaleFall/dsh-wps-bridge.git" },
-  "engines": { "node": ">=22" }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SaltedWhaleFall/dsh-wps-bridge.git"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }

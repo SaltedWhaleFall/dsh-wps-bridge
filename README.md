@@ -25,28 +25,66 @@ WPS 的 COM 接口只在 Windows 上存在，而 DSH 常跑在手机 proot 里�
 | `wps-worker.ps1` | Windows | 常驻 worker 模式（`wps-exec.ps1` 的子进程方案，避免每次冷启动 COM） |
 | `wps.sh` | Linux / DSH | 客户端：`ping` / `call` / `script` / `find` / `log` |
 | `启动WPS桥.bat` | Windows | 双击启动，带 UAC 提升 |
+| `addon/` | Windows（可选） | WPS 功能区加载项：一眼看端口、探活、抄手机命令；不装不影响桥 |
 
 ## 安装
 
-**Windows 侧**
+### 需要装什么、跑什么（清单）
+
+| 在哪 | 要装/要跑 | 必需 | 说明 |
+|---|---|---|---|
+| Windows | WPS Office（或 Excel / Word / PowerPoint） | 是 | 桥操作的就是它，必须已经有一个文档开着 |
+| Windows | PowerShell 5.1（系统自带） | 是 | 端口、COM 都靠它 |
+| Windows | `wps-exec.ps1` `wps-com.ps1` `wps-worker.ps1` `启动WPS桥.bat` | 是 | 放在同一个目录里 |
+| Windows | **`addon/` 目录 → WPS 菜单栏选项卡**（可选） | 否 | 装了能在 WPS 里直接点按钮探活/看手机命令；不装也能用 |
+| Windows | Node.js ≥ 22 + DSH | 否 | 只有把桥当 DSH 插件（`index.js`）装时才需要 |
+| Linux / DSH | `wps.sh` | 是 | 客户端，`ping` / `call` / `script` / `find` |
+
+### Windows 侧：起桥
 
 1. 建一个可写目录（别放 `C:\Program Files`，写不了日志），比如 `D:\wps`
-2. 把 `wps-exec.ps1`、`wps-com.ps1`、`wps-worker.ps1` 放进去
-3. 先打开一个 WPS 文档，让 WPS 处于运行状态
-4. 右键 `启动WPS桥.bat` → 允许 UAC
-5. 首次运行 Windows 防火墙弹窗 → 勾「专用网络」
+2. 把 `wps-exec.ps1`、`wps-com.ps1`、`wps-worker.ps1`、`启动WPS桥.bat` 放进去
+3. 先打开一个 WPS 文档，让 WPS 处于运行状态（桥要接管这个正在跑的实例，冷启动的隐藏实例你保存了也看不见）
+4. 双击 `启动WPS桥.bat` → 允许 UAC（监听局域网需要管理员）
+5. 首次运行 Windows 防火墙弹窗 → 勾「专用网络」（**只勾专用**，别勾公用）
 6. 窗口里会打印 `http://192.168.x.x:8765/ping`，浏览器打开看到 `{"ok":true,...}` 就成了
 
-**Linux / DSH 侧**
+参数都在 `启动WPS桥.bat` 里，可以改：
+
+```
+-Port 8765          监听端口
+-Token <字符串>     启用后每个请求要带 X-Token 头
+-AllowScript        开启 POST /script（能跑任意 PowerShell，默认关）
+-NoElevate          不申请管理员（只监听 127.0.0.1 时可省掉 UAC）
+```
+
+### Windows 侧：装 WPS 菜单栏加载项（可选）
+
+不装也能用——桥是独立进程，手机端照样能调。装了的好处是：在 WPS 里点一下就能看当前端口、探活、抄走手机要用的命令。
+
+1. 把仓库里的 **`addon/` 整个目录**拷到：
+
+   ```
+   %APPDATA%\kingsoft\wps\jsaddons\wps-claude-addon_\
+   ```
+
+   也就是 `C:\Users\<你>\AppData\Roaming\kingsoft\wps\jsaddons\wps-claude-addon_\`（**带结尾下划线**，WPS 要求目录名与 `manifest.xml` 里的插件名对应）
+
+2. 目录里应该有：`manifest.xml`、`ribbon.xml`、`js/main.js`、`index.html`、`config.ps1`、`ping.ps1`、`probe.ps1`、`show.ps1`、`help.ps1`
+3. **完全退出 WPS，再打开**（不是关文档，是退出进程；任务栏右键 → 退出）
+4. 打开任意表格 → 功能区最右边出现 **「DSH 桥」** 选项卡
+5. 不想要了：退出 WPS，把 `wps-claude-addon_` 这个目录删掉即可，不改注册表
+
+**这一版加载项里没有「启动/停止服务」按钮**——WPS 的 JS 加载项沙箱不让它起外部进程（点了会触发 `cmd.exe` 安全告警，还起不来）。启停一律走 `启动WPS桥.bat`。
+
+### Linux / DSH 侧：配地址
 
 ```bash
 bash wps.sh set 192.168.1.50:8765      # 记下地址（换成你那台的 IP:端口）
-bash wps.sh ping                     # 探活
-bash wps.sh find 192.168.1             # 不知道 IP 时扫网段
+bash wps.sh ping                     # 探活，期望 {"ok":true,...}
+bash wps.sh find 192.168.1             # 不知道 IP 时扫网段（DHCP/校园网会跳）
 bash wps.sh show                     # 看当前配置
 ```
-
-地址存在 `~/.wps-exec.conf`，也可以用环境变量临时覆盖：`WPS_HOST=1.2.3.4:8765 bash wps.sh ping`。
 
 ## 接口
 
